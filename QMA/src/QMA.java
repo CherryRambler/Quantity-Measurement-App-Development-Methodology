@@ -1,6 +1,4 @@
-package com.apps.quantitymeasurement;
-
-public class QMA{
+public class QMA {
 
     public static class Feet {
         private final double value;
@@ -9,18 +7,12 @@ public class QMA{
             this.value = value;
         }
 
-        public double getValue() {
-            return value;
-        }
-
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
-
             if (obj == null || getClass() != obj.getClass()) return false;
 
             Feet other = (Feet) obj;
-
             return Double.compare(this.value, other.value) == 0;
         }
 
@@ -30,10 +22,47 @@ public class QMA{
         }
     }
 
-    public static void main(String[] args) {
-        Feet f1 = new Feet(1.0);
-        Feet f2 = new Feet(1.0);
+    public static class Inches {
+        private final double value;
 
-        System.out.println("Are equal? " + f1.equals(f2));
+        public Inches(double value) {
+            this.value = value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+
+            Inches other = (Inches) obj;
+            return Double.compare(this.value, other.value) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            return Double.hashCode(value);
+        }
+    }
+
+
+    public static boolean compareFeet(double val1, double val2) {
+        Feet f1 = new Feet(val1);
+        Feet f2 = new Feet(val2);
+        return f1.equals(f2);
+    }
+
+    public static boolean compareInches(double val1, double val2) {
+        Inches i1 = new Inches(val1);
+        Inches i2 = new Inches(val2);
+        return i1.equals(i2);
+    }
+
+    public static void main(String[] args) {
+
+        boolean feetResult = compareFeet(1.0, 1.0);
+        boolean inchResult = compareInches(1.0, 1.0);
+
+        System.out.println("feet equals to  (" + feetResult + ")");
+        System.out.println("inches equals to(" + inchResult + ")");
     }
 }
