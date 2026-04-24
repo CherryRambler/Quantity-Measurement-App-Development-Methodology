@@ -1,31 +1,31 @@
 public class QMA {
-
-    public static void demonstrateAdditionWithTarget(QuantityLength q1, QuantityLength q2, LengthUnit targetUnit) {
-        QuantityLength result = QuantityLength.add(q1, q2, targetUnit);
-
-        System.out.printf("Input: add(%s, %s, %s) -> ", q1, q2, targetUnit.name());
-
-        if (targetUnit == LengthUnit.YARDS && Math.abs(result.getValue() - 0.6666) < 0.01) {
-            System.out.printf("Output: Quantity(~0.667, YARDS)%n");
-        } else if (targetUnit == LengthUnit.YARDS && Math.abs(result.getValue() - 1.6666) < 0.01) {
-            System.out.printf("Output: Quantity(~1.667, YARDS)%n");
-        } else if (targetUnit == LengthUnit.CENTIMETERS && Math.abs(result.getValue() - 5.08) < 0.01) {
-            System.out.printf("Output: Quantity(~5.08, CENTIMETERS)%n");
-        } else {
-            System.out.printf("Output: %s%n", result);
-        }
-    }
-
     public static void main(String[] args) {
-        System.out.println("--- UC7: Explicit Target Unit Addition ---");
+        System.out.println("--- Testing Conversions ---");
+        System.out.println("Input: Quantity(1.0, FEET).convertTo(INCHES) -> Output: " +
+                new QuantityLength(1.0, LengthUnit.FEET).convertTo(LengthUnit.INCHES));
 
-        demonstrateAdditionWithTarget(new QuantityLength(1.0, LengthUnit.FEET), new QuantityLength(12.0, LengthUnit.INCHES), LengthUnit.FEET);
-        demonstrateAdditionWithTarget(new QuantityLength(1.0, LengthUnit.FEET), new QuantityLength(12.0, LengthUnit.INCHES), LengthUnit.INCHES);
-        demonstrateAdditionWithTarget(new QuantityLength(1.0, LengthUnit.FEET), new QuantityLength(12.0, LengthUnit.INCHES), LengthUnit.YARDS);
-        demonstrateAdditionWithTarget(new QuantityLength(1.0, LengthUnit.YARDS), new QuantityLength(3.0, LengthUnit.FEET), LengthUnit.YARDS);
-        demonstrateAdditionWithTarget(new QuantityLength(36.0, LengthUnit.INCHES), new QuantityLength(1.0, LengthUnit.YARDS), LengthUnit.FEET);
-        demonstrateAdditionWithTarget(new QuantityLength(2.54, LengthUnit.CENTIMETERS), new QuantityLength(1.0, LengthUnit.INCHES), LengthUnit.CENTIMETERS);
-        demonstrateAdditionWithTarget(new QuantityLength(5.0, LengthUnit.FEET), new QuantityLength(0.0, LengthUnit.INCHES), LengthUnit.YARDS);
-        demonstrateAdditionWithTarget(new QuantityLength(5.0, LengthUnit.FEET), new QuantityLength(-2.0, LengthUnit.FEET), LengthUnit.INCHES);
+        System.out.println("Input: Quantity(2.54, CENTIMETERS).convertTo(INCHES) -> Output: " +
+                new QuantityLength(2.54, LengthUnit.CENTIMETERS).convertTo(LengthUnit.INCHES));
+
+        System.out.println("\n--- Testing Arithmetic ---");
+        System.out.println("Input: Quantity(1.0, FEET).add(Quantity(12.0, INCHES), FEET) -> Output: " +
+                new QuantityLength(1.0, LengthUnit.FEET).add(new QuantityLength(12.0, LengthUnit.INCHES), LengthUnit.FEET));
+
+        System.out.println("Input: Quantity(1.0, YARDS).add(Quantity(3.0, FEET), YARDS) -> Output: " +
+                new QuantityLength(1.0, LengthUnit.YARDS).add(new QuantityLength(3.0, LengthUnit.FEET), LengthUnit.YARDS));
+
+        System.out.println("Input: Quantity(5.0, FEET).add(Quantity(0.0, INCHES), FEET) -> Output: " +
+                new QuantityLength(5.0, LengthUnit.FEET).add(new QuantityLength(0.0, LengthUnit.INCHES), LengthUnit.FEET));
+
+        System.out.println("\n--- Testing Equality ---");
+        System.out.println("Input: Quantity(36.0, INCHES).equals(Quantity(1.0, YARDS)) -> Output: " +
+                new QuantityLength(36.0, LengthUnit.INCHES).equals(new QuantityLength(1.0, LengthUnit.YARDS)));
+
+        System.out.println("\n--- Testing Unit Base Operations directly ---");
+        System.out.println("Input: LengthUnit.FEET.convertToBaseUnit(12.0) -> Output: " +
+                LengthUnit.FEET.convertToBaseUnit(12.0));
+
+        System.out.println("Input: LengthUnit.INCHES.convertToBaseUnit(12.0) -> Output: " +
+                LengthUnit.INCHES.convertToBaseUnit(12.0));
     }
 }
