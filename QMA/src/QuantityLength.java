@@ -1,25 +1,11 @@
 import java.util.Objects;
 
-public class QuantityLength {
-    private final double value;
-    private final LengthUnit unit;
-
+public record QuantityLength(double value, LengthUnit unit) {
     private static final double EPSILON = 1e-5;
 
-    public QuantityLength(double value, LengthUnit unit) {
+    public QuantityLength {
         validateInputs(value, unit);
-        this.value = value;
-        this.unit = unit;
     }
-
-    public double getValue() {
-        return value;
-    }
-
-    public LengthUnit getUnit() {
-        return unit;
-    }
-
 
     public static double convert(double value, LengthUnit source, LengthUnit target) {
         validateInputs(value, source);
@@ -35,24 +21,34 @@ public class QuantityLength {
     }
 
 
-    public QuantityLength add(QuantityLength other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Second operand cannot be null.");
-        }
+    private QuantityLength addInternal(QuantityLength other, LengthUnit targetUnit) {
+        if (other == null) throw new IllegalArgumentException("Second operand cannot be null.");
+        if (targetUnit == null) throw new IllegalArgumentException("Target unit cannot be null.");
 
         double thisInBase = this.value * this.unit.getBaseFactor();
         double otherInBase = other.value * other.unit.getBaseFactor();
         double sumInBase = thisInBase + otherInBase;
-        double finalValue = sumInBase / this.unit.getBaseFactor();
-        return new QuantityLength(finalValue, this.unit);
+
+        double finalValue = sumInBase / targetUnit.getBaseFactor();
+        return new QuantityLength(finalValue, targetUnit);
+    }
+
+    public QuantityLength add(QuantityLength other) {
+        return addInternal(other, this.unit);
+    }
+
+    public QuantityLength add(QuantityLength other, LengthUnit targetUnit) {
+        return addInternal(other, targetUnit);
+    }
+
+    public static QuantityLength add(QuantityLength length1, QuantityLength length2) {
+        if (length1 == null) throw new IllegalArgumentException("First operand cannot be null.");
+        return length1.add(length2);
     }
 
     public static QuantityLength add(QuantityLength length1, QuantityLength length2, LengthUnit targetUnit) {
-        if (length1 == null || length2 == null || targetUnit == null) {
-            throw new IllegalArgumentException("Operands and target unit cannot be null.");
-        }
-        QuantityLength resultInUnit1 = length1.add(length2);
-        return resultInUnit1.convertTo(targetUnit);
+        if (length1 == null) throw new IllegalArgumentException("First operand cannot be null.");
+        return length1.add(length2, targetUnit);
     }
 
     private static void validateInputs(double value, LengthUnit unit) {
