@@ -1,12 +1,12 @@
 import java.util.Objects;
 
-public class QuantityLength {
+public class QuantityWeight {
     private final double value;
-    private final LengthUnit unit;
+    private final WeightUnit unit;
 
     private static final double EPSILON = 0.01;
 
-    public QuantityLength(double value, LengthUnit unit) {
+    public QuantityWeight(double value, WeightUnit unit) {
         if (unit == null) {
             throw new IllegalArgumentException("Unit cannot be null");
         }
@@ -21,11 +21,11 @@ public class QuantityLength {
         return value;
     }
 
-    public LengthUnit getUnit() {
+    public WeightUnit getUnit() {
         return unit;
     }
 
-    public QuantityLength convertTo(LengthUnit targetUnit) {
+    public QuantityWeight convertTo(WeightUnit targetUnit) {
         if (targetUnit == null) {
             throw new IllegalArgumentException("Target unit cannot be null");
         }
@@ -35,10 +35,14 @@ public class QuantityLength {
         double baseValue = this.unit.convertToBaseUnit(this.value);
         double targetValue = targetUnit.convertFromBaseUnit(baseValue);
 
-        return new QuantityLength(targetValue, targetUnit);
+        return new QuantityWeight(targetValue, targetUnit);
     }
 
-    public QuantityLength add(QuantityLength other, LengthUnit targetUnit) {
+    public QuantityWeight add(QuantityWeight other) {
+        return add(other, this.unit);
+    }
+
+    public QuantityWeight add(QuantityWeight other, WeightUnit targetUnit) {
         if (other == null || targetUnit == null) {
             throw new IllegalArgumentException("Arguments cannot be null");
         }
@@ -48,7 +52,7 @@ public class QuantityLength {
         double sumBaseValue = thisBaseValue + otherBaseValue;
 
         double targetValue = targetUnit.convertFromBaseUnit(sumBaseValue);
-        return new QuantityLength(targetValue, targetUnit);
+        return new QuantityWeight(targetValue, targetUnit);
     }
 
     @Override
@@ -56,7 +60,7 @@ public class QuantityLength {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
 
-        QuantityLength other = (QuantityLength) obj;
+        QuantityWeight other = (QuantityWeight) obj;
 
         double thisBaseValue = this.unit.convertToBaseUnit(this.value);
         double otherBaseValue = other.unit.convertToBaseUnit(other.value);
@@ -72,6 +76,6 @@ public class QuantityLength {
 
     @Override
     public String toString() {
-        return String.format("Quantity(%.1f, %s)", value, unit.name());
+        return String.format("Quantity(%.3f, %s)", value, unit.name());
     }
 }

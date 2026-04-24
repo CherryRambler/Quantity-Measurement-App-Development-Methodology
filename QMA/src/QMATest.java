@@ -7,144 +7,175 @@ public class QMATest {
 
 
     @Test
-    public void testLengthUnitEnum_FeetConstant() {
-        assertEquals(1.0, LengthUnit.FEET.getConversionFactor(), DELTA, "FEET conversion factor should be 1.0");
+    public void testEquality_KilogramToKilogram_SameValue() {
+        assertTrue(new QuantityWeight(1.0, WeightUnit.KILOGRAM).equals(new QuantityWeight(1.0, WeightUnit.KILOGRAM)));
     }
 
     @Test
-    public void testLengthUnitEnum_InchesConstant() {
-        assertEquals(1.0 / 12.0, LengthUnit.INCHES.getConversionFactor(), DELTA, "INCHES conversion factor should be ~0.0833");
+    public void testEquality_KilogramToKilogram_DifferentValue() {
+        assertFalse(new QuantityWeight(1.0, WeightUnit.KILOGRAM).equals(new QuantityWeight(2.0, WeightUnit.KILOGRAM)));
     }
 
     @Test
-    public void testLengthUnitEnum_YardsConstant() {
-        assertEquals(3.0, LengthUnit.YARDS.getConversionFactor(), DELTA, "YARDS conversion factor should be 3.0");
+    public void testEquality_KilogramToGram_EquivalentValue() {
+        assertTrue(new QuantityWeight(1.0, WeightUnit.KILOGRAM).equals(new QuantityWeight(1000.0, WeightUnit.GRAM)));
     }
 
     @Test
-    public void testLengthUnitEnum_CentimetersConstant() {
-        assertEquals(1.0 / 30.48, LengthUnit.CENTIMETERS.getConversionFactor(), DELTA, "CENTIMETERS conversion factor should be ~0.0328");
+    public void testEquality_GramToKilogram_EquivalentValue() {
+        assertTrue(new QuantityWeight(1000.0, WeightUnit.GRAM).equals(new QuantityWeight(1.0, WeightUnit.KILOGRAM)));
+    }
+
+    @Test
+    public void testEquality_WeightVsLength_Incompatible() {
+        QuantityWeight weight = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        Object lengthDummy = new Object();
+        assertFalse(weight.equals(lengthDummy));
+    }
+
+    @Test
+    public void testEquality_NullComparison() {
+        assertFalse(new QuantityWeight(1.0, WeightUnit.KILOGRAM).equals(null));
+    }
+
+    @Test
+    public void testEquality_SameReference() {
+        QuantityWeight weight = new QuantityWeight(5.0, WeightUnit.POUND);
+        assertTrue(weight.equals(weight));
+    }
+
+    @Test
+    public void testEquality_NullUnit() {
+        assertThrows(IllegalArgumentException.class, () -> new QuantityWeight(1.0, null));
+    }
+
+    @Test
+    public void testEquality_TransitiveProperty() {
+        QuantityWeight a = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        QuantityWeight b = new QuantityWeight(1000.0, WeightUnit.GRAM);
+        QuantityWeight c = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+
+        assertTrue(a.equals(b));
+        assertTrue(b.equals(c));
+        assertTrue(a.equals(c));
+    }
+
+    @Test
+    public void testEquality_ZeroValue() {
+        assertTrue(new QuantityWeight(0.0, WeightUnit.KILOGRAM).equals(new QuantityWeight(0.0, WeightUnit.GRAM)));
+    }
+
+    @Test
+    public void testEquality_NegativeWeight() {
+        assertTrue(new QuantityWeight(-1.0, WeightUnit.KILOGRAM).equals(new QuantityWeight(-1000.0, WeightUnit.GRAM)));
+    }
+
+    @Test
+    public void testEquality_LargeWeightValue() {
+        assertTrue(new QuantityWeight(1000000.0, WeightUnit.GRAM).equals(new QuantityWeight(1000.0, WeightUnit.KILOGRAM)));
+    }
+
+    @Test
+    public void testEquality_SmallWeightValue() {
+        assertTrue(new QuantityWeight(0.001, WeightUnit.KILOGRAM).equals(new QuantityWeight(1.0, WeightUnit.GRAM)));
     }
 
 
     @Test
-    public void testConvertToBaseUnit_FeetToFeet() {
-        assertEquals(5.0, LengthUnit.FEET.convertToBaseUnit(5.0), DELTA);
+    public void testConversion_PoundToKilogram() {
+        QuantityWeight converted = new QuantityWeight(2.20462, WeightUnit.POUND).convertTo(WeightUnit.KILOGRAM);
+        assertEquals(1.0, converted.getValue(), DELTA);
     }
 
     @Test
-    public void testConvertToBaseUnit_InchesToFeet() {
-        assertEquals(1.0, LengthUnit.INCHES.convertToBaseUnit(12.0), DELTA);
+    public void testConversion_KilogramToPound() {
+        QuantityWeight converted = new QuantityWeight(1.0, WeightUnit.KILOGRAM).convertTo(WeightUnit.POUND);
+        assertEquals(2.20462, converted.getValue(), DELTA);
     }
 
     @Test
-    public void testConvertToBaseUnit_YardsToFeet() {
-        assertEquals(3.0, LengthUnit.YARDS.convertToBaseUnit(1.0), DELTA);
+    public void testConversion_SameUnit() {
+        QuantityWeight original = new QuantityWeight(5.0, WeightUnit.KILOGRAM);
+        QuantityWeight converted = original.convertTo(WeightUnit.KILOGRAM);
+        assertEquals(5.0, converted.getValue(), DELTA);
     }
 
     @Test
-    public void testConvertToBaseUnit_CentimetersToFeet() {
-        assertEquals(1.0, LengthUnit.CENTIMETERS.convertToBaseUnit(30.48), DELTA);
-    }
-
-
-    @Test
-    public void testConvertFromBaseUnit_FeetToFeet() {
-        assertEquals(2.0, LengthUnit.FEET.convertFromBaseUnit(2.0), DELTA);
+    public void testConversion_ZeroValue() {
+        QuantityWeight converted = new QuantityWeight(0.0, WeightUnit.KILOGRAM).convertTo(WeightUnit.GRAM);
+        assertEquals(0.0, converted.getValue(), DELTA);
     }
 
     @Test
-    public void testConvertFromBaseUnit_FeetToInches() {
-        assertEquals(12.0, LengthUnit.INCHES.convertFromBaseUnit(1.0), DELTA);
+    public void testConversion_NegativeValue() {
+        QuantityWeight converted = new QuantityWeight(-1.0, WeightUnit.KILOGRAM).convertTo(WeightUnit.GRAM);
+        assertEquals(-1000.0, converted.getValue(), DELTA);
     }
 
     @Test
-    public void testConvertFromBaseUnit_FeetToYards() {
-        assertEquals(1.0, LengthUnit.YARDS.convertFromBaseUnit(3.0), DELTA);
-    }
-
-    @Test
-    public void testConvertFromBaseUnit_FeetToCentimeters() {
-        assertEquals(30.48, LengthUnit.CENTIMETERS.convertFromBaseUnit(1.0), DELTA);
+    public void testConversion_RoundTrip() {
+        double originalValue = 1.5;
+        QuantityWeight result = new QuantityWeight(originalValue, WeightUnit.KILOGRAM)
+                .convertTo(WeightUnit.GRAM)
+                .convertTo(WeightUnit.KILOGRAM);
+        assertEquals(originalValue, result.getValue(), DELTA);
     }
 
 
     @Test
-    public void testQuantityLengthRefactored_Equality() {
-        QuantityLength oneFoot = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength twelveInches = new QuantityLength(12.0, LengthUnit.INCHES);
-        assertTrue(oneFoot.equals(twelveInches), "1 Foot should equal 12 Inches");
+    public void testAddition_SameUnit_KilogramPlusKilogram() {
+        QuantityWeight result = new QuantityWeight(1.0, WeightUnit.KILOGRAM).add(new QuantityWeight(2.0, WeightUnit.KILOGRAM));
+        assertEquals(3.0, result.getValue(), DELTA);
+        assertEquals(WeightUnit.KILOGRAM, result.getUnit());
     }
 
     @Test
-    public void testQuantityLengthRefactored_ConvertTo() {
-        QuantityLength oneFoot = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength converted = oneFoot.convertTo(LengthUnit.INCHES);
-
-        assertEquals(12.0, converted.getValue(), DELTA);
-        assertEquals(LengthUnit.INCHES, converted.getUnit());
-    }
-
-    @Test
-    public void testQuantityLengthRefactored_Add() {
-        QuantityLength oneFoot = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength twelveInches = new QuantityLength(12.0, LengthUnit.INCHES);
-        QuantityLength result = oneFoot.add(twelveInches, LengthUnit.FEET);
-
+    public void testAddition_CrossUnit_KilogramPlusGram() {
+        QuantityWeight result = new QuantityWeight(1.0, WeightUnit.KILOGRAM).add(new QuantityWeight(1000.0, WeightUnit.GRAM));
         assertEquals(2.0, result.getValue(), DELTA);
-        assertEquals(LengthUnit.FEET, result.getUnit());
+        assertEquals(WeightUnit.KILOGRAM, result.getUnit());
     }
 
     @Test
-    public void testQuantityLengthRefactored_AddWithTargetUnit() {
-        QuantityLength oneFoot = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength twelveInches = new QuantityLength(12.0, LengthUnit.INCHES);
-        QuantityLength result = oneFoot.add(twelveInches, LengthUnit.YARDS);
-
-        assertEquals(2.0 / 3.0, result.getValue(), DELTA); // 2 feet is ~0.667 yards
-        assertEquals(LengthUnit.YARDS, result.getUnit());
-    }
-
-
-    @Test
-    public void testQuantityLengthRefactored_NullUnit() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            new QuantityLength(1.0, null);
-        });
-        assertEquals("Unit cannot be null", exception.getMessage());
+    public void testAddition_CrossUnit_PoundPlusKilogram() {
+        QuantityWeight result = new QuantityWeight(2.20462, WeightUnit.POUND).add(new QuantityWeight(1.0, WeightUnit.KILOGRAM));
+        assertEquals(4.40924, result.getValue(), DELTA);
+        assertEquals(WeightUnit.POUND, result.getUnit());
     }
 
     @Test
-    public void testQuantityLengthRefactored_InvalidValue() {
-        IllegalArgumentException exceptionNaN = assertThrows(IllegalArgumentException.class, () -> {
-            new QuantityLength(Double.NaN, LengthUnit.FEET);
-        });
-        assertEquals("Value cannot be NaN or Infinite", exceptionNaN.getMessage());
-
-        IllegalArgumentException exceptionInfinite = assertThrows(IllegalArgumentException.class, () -> {
-            new QuantityLength(Double.POSITIVE_INFINITY, LengthUnit.FEET);
-        });
-        assertEquals("Value cannot be NaN or Infinite", exceptionInfinite.getMessage());
-    }
-
-
-    @Test
-    public void testRoundTripConversion_RefactoredDesign() {
-        double originalValue = 10.0;
-        double baseValue = LengthUnit.YARDS.convertToBaseUnit(originalValue);
-        double centiValue = LengthUnit.CENTIMETERS.convertFromBaseUnit(baseValue);
-
-        double backToBase = LengthUnit.CENTIMETERS.convertToBaseUnit(centiValue);
-        double finalYards = LengthUnit.YARDS.convertFromBaseUnit(backToBase);
-
-        assertEquals(originalValue, finalYards, DELTA, "Round trip conversion should retain mathematical precision");
+    public void testAddition_ExplicitTargetUnit_Kilogram() {
+        QuantityWeight result = new QuantityWeight(1.0, WeightUnit.KILOGRAM).add(new QuantityWeight(1000.0, WeightUnit.GRAM), WeightUnit.GRAM);
+        assertEquals(2000.0, result.getValue(), DELTA);
+        assertEquals(WeightUnit.GRAM, result.getUnit());
     }
 
     @Test
-    public void testUnitImmutability() {
+    public void testAddition_Commutativity() {
+        QuantityWeight a = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        QuantityWeight b = new QuantityWeight(1000.0, WeightUnit.GRAM);
 
-        double initialFactor = LengthUnit.FEET.getConversionFactor();
-        double subsequentFactor = LengthUnit.FEET.getConversionFactor();
-        assertEquals(initialFactor, subsequentFactor, "Enum conversion factor should be immutable");
+        QuantityWeight result1 = a.add(b, WeightUnit.KILOGRAM);
+        QuantityWeight result2 = b.add(a, WeightUnit.KILOGRAM);
+
+        assertTrue(result1.equals(result2));
+    }
+
+    @Test
+    public void testAddition_WithZero() {
+        QuantityWeight result = new QuantityWeight(5.0, WeightUnit.KILOGRAM).add(new QuantityWeight(0.0, WeightUnit.GRAM));
+        assertEquals(5.0, result.getValue(), DELTA);
+    }
+
+    @Test
+    public void testAddition_NegativeValues() {
+        QuantityWeight result = new QuantityWeight(5.0, WeightUnit.KILOGRAM).add(new QuantityWeight(-2000.0, WeightUnit.GRAM));
+        assertEquals(3.0, result.getValue(), DELTA);
+    }
+
+    @Test
+    public void testAddition_LargeValues() {
+        QuantityWeight result = new QuantityWeight(1e6, WeightUnit.KILOGRAM).add(new QuantityWeight(1e6, WeightUnit.KILOGRAM));
+        assertEquals(2e6, result.getValue(), DELTA);
     }
 }
