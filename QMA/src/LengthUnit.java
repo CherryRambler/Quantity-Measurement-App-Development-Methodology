@@ -1,15 +1,18 @@
-public class QMA {
+public enum LengthUnit {
 
-    public static void main(String[] args) {
+    FEET(1.0),
 
-        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCH);
+    INCH(1.0 / 12.0),
+    YARDS(3.0),
 
-        System.out.println("Equal (" + q1.equals(q2) + ")");
+    CENTIMETER(0.393701 / 12.0);
+    private final double toFeetFactor;
 
-        QuantityLength q3 = new QuantityLength(1.0, LengthUnit.INCH);
-        QuantityLength q4 = new QuantityLength(1.0, LengthUnit.INCH);
+    LengthUnit(double toFeetFactor) {
+        this.toFeetFactor = toFeetFactor;
+    }
 
-        System.out.println("Equal (" + q3.equals(q4) + ")");
+    public double toFeet(double value) {
+        return value * toFeetFactor;
     }
 }
