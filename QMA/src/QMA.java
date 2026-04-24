@@ -1,31 +1,28 @@
 public class QMA {
     public static void main(String[] args) {
-        System.out.println("--- Testing Conversions ---");
-        System.out.println("Input: Quantity(1.0, FEET).convertTo(INCHES) -> Output: " +
-                new QuantityLength(1.0, LengthUnit.FEET).convertTo(LengthUnit.INCHES));
+        System.out.println("--- Equality Comparisons ---");
+        System.out.println("Input: Quantity(1.0, KILOGRAM).equals(Quantity(1.0, KILOGRAM)) -> Output: " +
+                new QuantityWeight(1.0, WeightUnit.KILOGRAM).equals(new QuantityWeight(1.0, WeightUnit.KILOGRAM)));
+        System.out.println("Input: Quantity(1.0, KILOGRAM).equals(Quantity(1000.0, GRAM)) -> Output: " +
+                new QuantityWeight(1.0, WeightUnit.KILOGRAM).equals(new QuantityWeight(1000.0, WeightUnit.GRAM)));
+        System.out.println("Input: Quantity(1.0, KILOGRAM).equals(Quantity(~2.20462, POUND)) -> Output: " +
+                new QuantityWeight(1.0, WeightUnit.KILOGRAM).equals(new QuantityWeight(2.20462, WeightUnit.POUND)));
 
-        System.out.println("Input: Quantity(2.54, CENTIMETERS).convertTo(INCHES) -> Output: " +
-                new QuantityLength(2.54, LengthUnit.CENTIMETERS).convertTo(LengthUnit.INCHES));
+        System.out.println("\n--- Unit Conversions ---");
+        System.out.println("Input: Quantity(1.0, KILOGRAM).convertTo(GRAM) -> Output: " +
+                new QuantityWeight(1.0, WeightUnit.KILOGRAM).convertTo(WeightUnit.GRAM));
+        System.out.println("Input: Quantity(2.0, POUND).convertTo(KILOGRAM) -> Output: " +
+                new QuantityWeight(2.0, WeightUnit.POUND).convertTo(WeightUnit.KILOGRAM));
 
-        System.out.println("\n--- Testing Arithmetic ---");
-        System.out.println("Input: Quantity(1.0, FEET).add(Quantity(12.0, INCHES), FEET) -> Output: " +
-                new QuantityLength(1.0, LengthUnit.FEET).add(new QuantityLength(12.0, LengthUnit.INCHES), LengthUnit.FEET));
+        System.out.println("\n--- Addition Operations (Implicit Target Unit) ---");
+        System.out.println("Input: Quantity(1.0, KILOGRAM).add(Quantity(1000.0, GRAM)) -> Output: " +
+                new QuantityWeight(1.0, WeightUnit.KILOGRAM).add(new QuantityWeight(1000.0, WeightUnit.GRAM)));
 
-        System.out.println("Input: Quantity(1.0, YARDS).add(Quantity(3.0, FEET), YARDS) -> Output: " +
-                new QuantityLength(1.0, LengthUnit.YARDS).add(new QuantityLength(3.0, LengthUnit.FEET), LengthUnit.YARDS));
+        System.out.println("\n--- Addition Operations (Explicit Target Unit) ---");
+        System.out.println("Input: Quantity(1.0, KILOGRAM).add(Quantity(1000.0, GRAM), GRAM) -> Output: " +
+                new QuantityWeight(1.0, WeightUnit.KILOGRAM).add(new QuantityWeight(1000.0, WeightUnit.GRAM), WeightUnit.GRAM));
 
-        System.out.println("Input: Quantity(5.0, FEET).add(Quantity(0.0, INCHES), FEET) -> Output: " +
-                new QuantityLength(5.0, LengthUnit.FEET).add(new QuantityLength(0.0, LengthUnit.INCHES), LengthUnit.FEET));
-
-        System.out.println("\n--- Testing Equality ---");
-        System.out.println("Input: Quantity(36.0, INCHES).equals(Quantity(1.0, YARDS)) -> Output: " +
-                new QuantityLength(36.0, LengthUnit.INCHES).equals(new QuantityLength(1.0, LengthUnit.YARDS)));
-
-        System.out.println("\n--- Testing Unit Base Operations directly ---");
-        System.out.println("Input: LengthUnit.FEET.convertToBaseUnit(12.0) -> Output: " +
-                LengthUnit.FEET.convertToBaseUnit(12.0));
-
-        System.out.println("Input: LengthUnit.INCHES.convertToBaseUnit(12.0) -> Output: " +
-                LengthUnit.INCHES.convertToBaseUnit(12.0));
-    }
+        System.out.println("\n--- Category Incompatibility ---");
+        System.out.println("Input: Quantity(1.0, KILOGRAM).equals(Quantity(1.0, FOOT)) -> Output: " +
+                new QuantityWeight(1.0, WeightUnit.KILOGRAM).equals(new Object()));
 }
